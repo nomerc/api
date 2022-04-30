@@ -1,0 +1,75 @@
+<!-- views/auth.ejs -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sign In</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <!-- load bulma css -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <!-- load fontawesome -->
+    <style>
+      body {
+        padding-top: 70px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron text-center text-primary">
+        <h1><span class="fa fa-lock"></span> Sign in</h1>
+
+        <div>
+          <a
+            href="/auth/pages/register"
+            class="btn btn-info"
+            style="margin-bottom: 10px; width: 250px"
+          >
+            Register</a
+          >
+        </div>
+
+        <form method="post" action="/auth/local/">
+          <p>
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" />
+          </p>
+          <p>
+            <label for="password">Password:</label>
+            <input type="text" name="password" id="password" />
+          </p>
+          <p>
+            <input
+              style="margin: 10px; width: 250px"
+              class="btn btn-primary"
+              type="submit"
+              value="Log in"
+            />
+          </p>
+        </form>
+
+        <div>
+          <a
+            href="/auth/google"
+            class="btn btn-info"
+            style="margin-bottom: 10px; width: 250px"
+            ><span class="fa fa-google"></span> Sign In with Google</a
+          >
+        </div>
+        <div>
+          <a
+            href="/auth/facebook"
+            class="btn btn-info"
+            style="margin-bottom: 10px; width: 250px"
+            ><span class="fa fa-facebook"></span> Sign In with Facebook</a
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!-- views/signIn.ejs -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register new account</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <!-- load bulma css -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <!-- load fontawesome -->
+    <style>
+      body {
+        padding-top: 70px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron text-center text-primary">
+        <h1><span class="fa fa-lock"></span> Register</h1>
+
+        <div>
+          <a
+            href="/auth/pages/signIn"
+            class="btn btn-info"
+            style="margin-bottom: 10px; width: 250px"
+          >
+            Sign in</a
+          >
+        </div>
+
+        <form method="post" action="/auth/local/register">
+          <p>
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" />
+          </p>
+          <p>
+            <label for="displayedname">Dsp name:</label>
+            <input type="text" name="displayedname" id="displayedname" />
+          </p>
+          <p></p>
+          <p>
+            <label for="password">Password:</label>
+            <input type="text" name="password" id="password" />
+          </p>
+          <p>
+            <input
+              style="margin: 10px; width: 250px"
+              class="btn btn-primary"
+              type="submit"
+              value="Register"
+            />
+          </p>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
