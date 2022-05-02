@@ -1,10 +1,8 @@
-const express = require("express");
-const passport = require("passport");
-let TwitterStrategy = require("passport-twitter").Strategy;
-const router = express.Router();
-const { auth } = require("../controllers/authController");
-
-let userProfile;
+const express = require("express"),
+  passport = require("passport"),
+  TwitterStrategy = require("passport-twitter").Strategy,
+  router = express.Router(),
+  { auth, verify } = require("../controllers/authController");
 
 passport.use(
   new TwitterStrategy(
@@ -13,25 +11,18 @@ passport.use(
       consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
       callbackURL: process.env.TWITTER_CALLBACK_URL,
     },
-    function (accessToken, refreshToken, profile, done) {
-      userProfile = profile;
-      return done(null, userProfile);
-    }
+    verify
   )
 );
-
-router.get("/success", (req, res) => {
-  res.render("pages/success", { user: userProfile });
-});
 
 router.get("/", passport.authenticate("twitter"));
 
 router.get(
   "/callback",
-  passport.authenticate("twitter", { failureRedirect: "error" }),
-  auth
+  passport.authenticate("twitter", {
+    successRedirect: "../success",
+    failureRedirect: "../error",
+  })
 );
-
-router.get("/error", (req, res) => res.send("error logging in"));
 
 module.exports = router;

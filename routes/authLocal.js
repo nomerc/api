@@ -5,9 +5,10 @@ const express = require("express"),
 LocalStrategy = require("passport-local").Strategy;
 
 const router = express.Router();
-const { auth, passport_strategy_cb } = require("../controllers/authController");
+const { auth } = require("../controllers/authController");
 
-// let userProfile;
+//to save username for future use(just in case)
+// let userProfile
 
 passport.use(
   new LocalStrategy(function (username, password, done) {
@@ -37,24 +38,25 @@ passport.use(
   })
 );
 
-router.get("/success", (req, res) => {
-  // console.log(req.user);
-  // console.log(req.session.passport.user);
-  res.render("pages/success", { user: req.user });
-});
+//these routes can be used in each authProvider file separately in case if different response from each provider is needed
+//don't forget to change routes from ../sucess ../error to success and error correspondively
 
-router.get("/error", (req, res) =>
-  res.send("error logging in " + req.query.message)
-);
+// router.get("/success", (req, res) => {
+//   res.render("pages/success", { user: req.user });
+// });
+
+// router.get("/error", (req, res) =>
+//   res.send("error logging in " + req.query.message)
+// );
 
 router.post(
   "/",
   passport.authenticate("local", {
     failureRedirect:
-      "error/?message=" + encodeURIComponent("wrong username/password"),
+      "../error/?message=" + encodeURIComponent("wrong username/password"),
   }),
   function (req, res) {
-    res.redirect("success");
+    res.redirect("../success");
   }
 );
 
@@ -68,10 +70,18 @@ router.post("/register", async function (req, res) {
   //if user with the name is already in db
   if (await User.usernameIsOccupied(user.username))
     return res.redirect(
-      "error/?message=" + encodeURIComponent("username unavailable")
+      "../error/?message=" + encodeURIComponent("username unavailable")
     );
 
   user.save({ req, res });
 });
+
+// test authentication
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/");
+}
 
 module.exports = router;

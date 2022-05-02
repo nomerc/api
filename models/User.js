@@ -1,7 +1,6 @@
 const mongoose = require("mongoose"),
   crypto = require("crypto");
-// passportLocalMongoose = require('passport-local-mongoose'),
-// bcrypt = require("bcrypt-nodejs");
+//local auth can be done using passportLocalMongoose
 
 var UserSchema = new mongoose.Schema({
   username: {
@@ -57,8 +56,6 @@ UserSchema.methods.verifyPassword = function (password) {
 //   });
 // };
 
-// Account.plugin(passportLocalMongoose);
-
 //Middleware executes before save
 UserSchema.pre("save", function (next, req_res) {
   const { req, res } = { ...req_res },
@@ -88,7 +85,7 @@ UserSchema.pre("save", function (next, req_res) {
         if (err) {
           next(err);
         }
-        res.redirect("success");
+        res.redirect("../success");
         next();
       });
     }

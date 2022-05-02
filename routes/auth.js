@@ -25,7 +25,19 @@ router.get("/pages/signIn", (req, res) => {
   res.render("pages/signIn");
 });
 
+//in case of succesfully logged or registered
+router.get("/success", (req, res) => {
+  // console.log(req.user);
+  // console.log(req.session.passport.user);
+  res.render("pages/success", { user: req.user });
+});
+//in case of failure
+router.get("/error", (req, res) =>
+  res.send("error logging in " + req.query.message)
+);
+
 //get products of currently logged user
+//just for demonstration purposes
 router.get("/pages/products", (req, res) => {
   Product.find({ user_id: req.user._id }, function (err, products) {
     res.render("pages/success", { user: req.user, products });
