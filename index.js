@@ -12,8 +12,11 @@ const bodyParser = require("body-parser");
 const app = express();
 
 //body parser middleware
-// app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+
+//
+// app.use(express.json());
 
 //view engine (ejs,jade)
 app.set("view engine", "ejs");
@@ -39,6 +42,7 @@ app.use(
     resave: false, //if true - forces the session to be saved back to the session store
     saveUninitialized: true, //if true - forces a session that is “uninitialized” to be saved to the store
     secret: "JK4FFD2EK8JF_fdfer",
+    proxy: true,
   })
 );
 

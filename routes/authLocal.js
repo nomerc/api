@@ -56,7 +56,15 @@ router.post(
       "../error/?message=" + encodeURIComponent("wrong username/password"),
   }),
   function (req, res) {
-    res.redirect("../success");
+    //response for client
+    res.status(200).send({
+      _id: req.user._id,
+      username: req.user.username,
+      providerName: req.user.providerName,
+    });
+
+    // SSR
+    // res.redirect("../success");
   }
 );
 
