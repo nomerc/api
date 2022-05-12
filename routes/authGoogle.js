@@ -1,8 +1,6 @@
 const express = require("express"),
   passport = require("passport"),
-  User = require("../models/User");
-
-var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+  GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
 const router = express.Router();
 const { auth, verify } = require("../controllers/authController");
@@ -34,28 +32,27 @@ router.get(
   passport.authenticate("google", {
     //SSR
     // successRedirect: "../success",
-    failureRedirect: "../error",
+    // failureRedirect: "../error",
+    failWithError: true,
   }),
 
-  /*   function (req, res) {
-    //response for client
-    res.status(200).send({
-      _id: req.user._id,
-      username: req.user.username,
-      providerName: req.user.providerName,
-    });
-  }
- */
   function (req, res) {
     var responseHTML =
       '<html><head><title>Main</title></head><body></body><script>res = %value%; window.opener.postMessage(res, "*");window.close();</script></html>';
     responseHTML = responseHTML.replace(
       "%value%",
       JSON.stringify({
-        user: req.user,
+        user: {
+          _id: req.user._id,
+          username: req.user.username,
+          providerName: req.user.providerName,
+        },
       })
     );
     res.status(200).send(responseHTML);
+  },
+  (err, req, res, next) => {
+    next(err);
   }
   // auth
 );

@@ -1,22 +1,21 @@
 /*  EXPRESS */
-const express = require("express");
-const db = require("./config/db");
-const User = require("./models/User");
-const morgan = require("morgan");
-const path = require("path");
-const cors = require("cors");
-const passport = require("passport");
-const session = require("express-session");
-const bodyParser = require("body-parser");
+const express = require("express"),
+  db = require("./config/db"),
+  errorController = require("./controllers/errController"),
+  User = require("./models/User"),
+  morgan = require("morgan"),
+  path = require("path"),
+  cors = require("cors"),
+  passport = require("passport"),
+  session = require("express-session"),
+  MongoStore = require("connect-mongo"),
+  bodyParser = require("body-parser");
 
 const app = express();
 
 //body parser middleware
 app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
-
-//
-// app.use(express.json());
 
 //view engine (ejs,jade)
 app.set("view engine", "ejs");
@@ -28,7 +27,7 @@ require("dotenv").config({ path: "./config/.env" });
 db().then();
 
 // Enable cors
-app.use(cors());
+app.use(cors({ origin: "http://localhost:4200", credentials: true }));
 
 //logger
 app.use(morgan("dev"));
@@ -39,10 +38,27 @@ app.use(express.static(path.join(__dirname, "public")));
 //session middleware configuration
 app.use(
   session({
-    resave: false, //if true - forces the session to be saved back to the session store
-    saveUninitialized: true, //if true - forces a session that is “uninitialized” to be saved to the store
+    //key of the cookie to be saved on client side
+    // key: "session_id",
+
+    resave: true, //if true - forces the session to be saved back to the session store
+
+    saveUninitialized: false, //if true - forces a session that is “uninitialized” to be saved to the store
+
     secret: "JK4FFD2EK8JF_fdfer",
-    proxy: true,
+
+    // cookie: { secure: false },
+
+    // cookie: {
+    //   maxAge: 1000 * 60,
+    //   rolling: true,
+    // },
+
+    //session store
+
+    // store: MongoStore.create({
+    //   mongoUrl: process.env.MONGO_URI,
+    // }),
   })
 );
 
@@ -65,7 +81,6 @@ passport.deserializeUser(function (id, done) {
   // done(null, id);
 
   //   //If using Mongoose with MongoDB; if other you will need JS specific to that schema.
-
   User.findById(id, function (err, user) {
     done(err, user);
   });
@@ -74,6 +89,19 @@ passport.deserializeUser(function (id, done) {
 // routes
 app.get("/", (req, res) => res.render("pages/signIn"));
 app.use("/auth", require("./routes/auth"));
+
+// app.get("/auth/pages/products", (req, res) => {
+//   console.log(req.isAuthenticated());
+//   console.log(req.user);
+//   // Product.find({ user_id: req.user._id }, function (err, products) {
+//   //   res.status(200).send({ user: req.user, products });
+//   //   // SSR
+//   //   // res.render("pages/success", { user: req.user, products });
+//   // });
+//   res.sendStatus(200);
+// });
+
+app.use(errorController);
 
 const port = process.env.PORT || 3000;
 

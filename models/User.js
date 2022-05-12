@@ -1,12 +1,23 @@
 const mongoose = require("mongoose"),
-  crypto = require("crypto");
+  crypto = require("crypto"),
+  validator = require("validator");
 //local auth can be done using passportLocalMongoose
 
 var UserSchema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, "Please enter your name"],
+    unique: true,
+    validate: [
+      validator.isAlphanumeric,
+      "Usernames may only have letters and numbers.",
+    ],
     minlength: 1,
+    trim: true,
+  },
+  displayedName: {
+    type: String,
+    required: false,
     trim: true,
   },
   providerName: {
@@ -19,7 +30,12 @@ var UserSchema = new mongoose.Schema({
   },
   hashed_password: {
     type: Buffer,
-    required: false,
+    required: [
+      function () {
+        return this.providerName === "local";
+      },
+      "Password required",
+    ],
     minlength: 8,
   },
   salt: {
@@ -85,20 +101,21 @@ UserSchema.pre("save", function (next, req_res) {
         if (err) {
           next(err);
         }
-        res.redirect("../success");
+        //SSR
+        // res.redirect("../success");
         next();
       });
     }
   );
 });
 
-UserSchema.statics.usernameIsOccupied = async function (username) {
-  const User = this;
-
-  const _user = await User.findOne({ username });
-
-  if (_user !== null) return true;
-  return false;
-};
+//Error is handled in errorController
+/* UserSchema.post("save", function (error, doc, next) {
+  if (error.name === "MongoServerError" && error.code === 11000) {
+    next(new Error("That username is taken."));
+  } else {
+    next();
+  }
+}); */
 
 module.exports = mongoose.model("User", UserSchema);

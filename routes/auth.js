@@ -38,15 +38,25 @@ router.get("/error", (req, res) =>
 
 //get products of currently logged user
 //just for demonstration purposes
-router.get("/pages/products", (req, res) => {
-  Product.find({ user_id: req.user._id }, function (err, products) {
-    res.render("pages/success", { user: req.user, products });
-  });
+router.get("/pages/products", (req, res, next) => {
+  if (req.user) {
+    Product.find({ user_id: req.user._id }, (err, products) => {
+      if (err) {
+        next(err);
+      }
+      res.status(200).send({ products });
+      // SSR
+      // res.render("pages/success", { user: req.user, products });
+    });
+  } else next({ err: "User not defined" });
 });
 
-router.get("/logout", function (req, res) {
+router.get("/signout", function (req, res) {
   req.logout();
-  res.redirect("/");
+  res.status(200).send({ message: "Signed out" });
+
+  //SSR
+  // res.redirect("/");
 });
 
 module.exports = router;
